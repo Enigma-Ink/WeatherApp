@@ -53,12 +53,14 @@ function getWeatherByCoords(lat, lon) {
     })
         .then(response => response.json())
         .then(data => {
+            console.log('Nominatim response:', data); // Debugging
             const city = getCityFromNominatim(data);
             if (city) {
                 const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
                 const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
                 fetchWeatherData(currentWeatherUrl, forecastUrl);
             } else {
+                console.warn('City not found. Falling back to Manila.');
                 getWeatherByCity("Manila");
             }
         })
@@ -70,13 +72,11 @@ function getWeatherByCoords(lat, lon) {
 
 function getCityFromNominatim(data) {
     if (data && data.address) {
-        if (data.address.city) return data.address.city;
-        if (data.address.town) return data.address.town;
-        if (data.address.village) return data.address.village;
-        if (data.address.locality) return data.address.locality;
-        if (data.address.suburb) return data.address.suburb;
+        console.log('Nominatim address details:', data.address); // Debugging
+        // Prioritize city, town, or other relevant fields
+        return data.address.city || data.address.town || data.address.village || data.address.locality || data.address.suburb || 'Unknown';
     }
-    return null; // Return null if no city is found
+    return 'Unknown';
 }
 
 function getWeatherByCity(city) {
@@ -90,6 +90,8 @@ function fetchWeatherData(currentWeatherUrl, forecastUrl) {
         fetch(currentWeatherUrl).then(response => response.json()),
         fetch(forecastUrl).then(response => response.json())
     ]).then(([currentData, forecastData]) => {
+        console.log('Current weather data:', currentData); // Debugging
+        console.log('Forecast data:', forecastData); // Debugging
         displayWeather(currentData);
         displayHourlyForecast(forecastData.list);
     }).catch(error => {
