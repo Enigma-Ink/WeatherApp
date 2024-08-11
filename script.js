@@ -54,9 +54,13 @@ function getWeatherByCoords(lat, lon) {
         .then(response => response.json())
         .then(data => {
             const city = getCityFromNominatim(data);
-            const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
-            const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
-            fetchWeatherData(currentWeatherUrl, forecastUrl);
+            if (city) {
+                const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+                const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
+                fetchWeatherData(currentWeatherUrl, forecastUrl);
+            } else {
+                getWeatherByCity("Manila");
+            }
         })
         .catch(error => {
             console.error('Error with Nominatim reverse geocoding:', error);
@@ -65,12 +69,14 @@ function getWeatherByCoords(lat, lon) {
 }
 
 function getCityFromNominatim(data) {
-    if (data.address) {
+    if (data && data.address) {
         if (data.address.city) return data.address.city;
         if (data.address.town) return data.address.town;
         if (data.address.village) return data.address.village;
+        if (data.address.locality) return data.address.locality;
+        if (data.address.suburb) return data.address.suburb;
     }
-    return "Manila"; // Fallback
+    return null; // Return null if no city is found
 }
 
 function getWeatherByCity(city) {
