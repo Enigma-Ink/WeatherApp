@@ -1,0 +1,147 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(135deg, #ffc3a0 0%, #ffafbd 50%, #c9d6ff 100%);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #333;
+}
+
+#weather-container {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    padding: 30px;
+    max-width: 600px;
+    width: 90%;
+    margin: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+h1 {
+    color: #ff6b6b;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+#search-container {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+input {
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px 0 0 5px;
+    width: 70%;
+    max-width: none;
+    margin-bottom: 0;
+}
+
+button {
+    padding: 12px 20px;
+    font-size: 16px;
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    width: 30%;
+}
+
+button:hover {
+    background: #ff8e8e;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.weather-card, .wind-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.weather-icon {
+    width: 100px;
+    height: 100px;
+    margin: 10px auto;
+}
+
+.temperature {
+    font-size: 3em;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.feels-like, .description {
+    font-size: 1.2em;
+    color: #666;
+}
+
+.wind-arrow {
+    font-size: 2em;
+    margin-top: 10px;
+}
+
+#hourly-forecast {
+    margin-top: 20px;
+}
+
+.forecast-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.forecast-item {
+    background: white;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.forecast-time {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.forecast-icon {
+    width: 50px;
+    height: 50px;
+    margin: 5px auto;
+}
+
+.forecast-temp {
+    font-size: 1.2em;
+    margin-top: 5px;
+}
+
+.error-message {
+    color: #d32f2f;
+    font-size: 1.2em;
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    #weather-container {
+        padding: 20px;
+    }
+}

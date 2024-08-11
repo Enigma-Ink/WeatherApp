@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="weather-container">
+        <header>
+            <h1>Weather Forecast</h1>
+        </header>
+
+        <div id="search-container">
+            <input type="text" id="city" placeholder="Enter city name">
+            <button onclick="getWeather()">Search</button>
+        </div>
+
+        <main role="main">
+            <div id="weather-display" class="section">
+                <!-- Weather information will be displayed here -->
+            
+            </div>
+
+            <div id="wind-info" class="section">
+                <!-- Wind information will be displayed here -->
+            </div>
+
+            <div id="hourly-forecast" class="section">
+                <!-- Hourly forecast will be displayed here -->
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
