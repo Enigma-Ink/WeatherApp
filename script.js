@@ -73,10 +73,18 @@ function getWeatherByCoords(lat, lon) {
 function extractCityFromNominatim(data) {
     if (data && data.address) {
         console.log('Nominatim address details:', data.address); // Debugging
-        // Extract city from detailed address fields
-        return data.address.city || data.address.town || data.address.village || 
-               data.address.locality || data.address.suburb || data.address.neighborhood || 
-               data.address.hamlet || 'Unknown';
+        // Extract city from detailed address fields, prioritizing city over other components
+        const city = data.address.city || data.address.town || data.address.village ||
+                     data.address.locality || data.address.suburb || data.address.neighborhood ||
+                     data.address.hamlet || 'Unknown';
+
+        // If city is not found, attempt a fallback
+        if (city === 'Unknown') {
+            const addressParts = [data.address.state, data.address.country];
+            return addressParts.filter(part => part).join(', ') || 'Unknown';
+        }
+
+        return city;
     }
     return 'Unknown';
 }
