@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const lat = position.coords.latitude;
             const lon = position.coords.longitude;
             userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            getWeatherByCoords(lat, lon);
+            getCityByCoords(lat, lon);
         }, function(error) {
             console.error("Error getting location:", error);
             getWeatherByCity("Manila");
@@ -44,6 +44,25 @@ function updateTime() {
     
     const timeString = now.toLocaleString('en-US', options);
     timeDisplay.textContent = timeString;
+}
+
+function getCityByCoords(lat, lon) {
+    const reverseGeocodeUrl = `https://api.openweathermap.org/data/2.5/geo/1.0/reverse?lat=${lat}&lon=${lon}&appid=${apiKey}`;
+    fetch(reverseGeocodeUrl)
+        .then(response => response.json())
+        .then(data => {
+            if (data.length > 0) {
+                const city = data[0].name;
+                getWeatherByCity(city);
+            } else {
+                console.error("City not found from coordinates");
+                getWeatherByCity("Manila");
+            }
+        })
+        .catch(error => {
+            console.error('Error with reverse geocoding:', error);
+            getWeatherByCity("Manila");
+        });
 }
 
 function getWeatherByCoords(lat, lon) {
@@ -112,17 +131,6 @@ function displayWeather(data) {
             <div class="wind-arrow" style="transform: rotate(${deg}deg)">➤</div>
         </div>
     `;
-
-    windInfoDiv.innerHTML = `
-        <div class="wind-card">
-            <h3>Wind Information</h3>
-            <p>Speed: ${speed} m/s</p>
-            <p>Direction: ${windDirection}</p>
-            <div class="wind-arrow" style="transform: rotate(${deg}deg)">➤</div>
-        </div>
-    `;
-
-    
 
     updateTime(); // Update time immediately after displaying weather
 }
