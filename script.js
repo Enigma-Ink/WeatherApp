@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const lat = position.coords.latitude;
             const lon = position.coords.longitude;
             userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            getWeatherByCoords(lat, lon);
+            getCityFromCoords(lat, lon);
         }, function(error) {
             console.error("Error getting location:", error);
             getWeatherByCity("Manila");
@@ -46,10 +46,22 @@ function updateTime() {
     timeDisplay.textContent = timeString;
 }
 
-function getWeatherByCoords(lat, lon) {
-    const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
-    const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
-    fetchWeatherData(currentWeatherUrl, forecastUrl);
+function getCityFromCoords(lat, lon) {
+    const reverseGeocodeUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+    fetch(reverseGeocodeUrl)
+        .then(response => response.json())
+        .then(data => {
+            if (data.cod === 200) {
+                getWeatherByCity(data.name);
+            } else {
+                console.error('Error with reverse geocoding:', data.message);
+                getWeatherByCity("Manila");
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching city from coordinates:', error);
+            getWeatherByCity("Manila");
+        });
 }
 
 function getWeatherByCity(city) {
@@ -112,17 +124,6 @@ function displayWeather(data) {
             <div class="wind-arrow" style="transform: rotate(${deg}deg)">➤</div>
         </div>
     `;
-
-    windInfoDiv.innerHTML = `
-        <div class="wind-card">
-            <h3>Wind Information</h3>
-            <p>Speed: ${speed} m/s</p>
-            <p>Direction: ${windDirection}</p>
-            <div class="wind-arrow" style="transform: rotate(${deg}deg)">➤</div>
-        </div>
-    `;
-
-    
 
     updateTime(); // Update time immediately after displaying weather
 }
