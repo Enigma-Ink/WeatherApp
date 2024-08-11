@@ -53,6 +53,7 @@ function getCityByCoords(lat, lon) {
         .then(data => {
             if (data.length > 0) {
                 const city = data[0].name;
+                console.log(`Detected city: ${city}`); // Debug line to verify city detection
                 getWeatherByCity(city);
             } else {
                 console.error("City not found from coordinates");
