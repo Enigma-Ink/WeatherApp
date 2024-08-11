@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const lat = position.coords.latitude;
             const lon = position.coords.longitude;
             userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            getCityFromCoords(lat, lon);
+            getWeatherByCoords(lat, lon);
         }, function(error) {
             console.error("Error getting location:", error);
             getWeatherByCity("Manila");
@@ -46,22 +46,31 @@ function updateTime() {
     timeDisplay.textContent = timeString;
 }
 
-function getCityFromCoords(lat, lon) {
-    const reverseGeocodeUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
-    fetch(reverseGeocodeUrl)
+function getWeatherByCoords(lat, lon) {
+    const nominatimUrl = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`;
+    fetch(nominatimUrl, {
+        headers: { 'User-Agent': 'WeatherApp/1.0 (your.email@example.com)' }
+    })
         .then(response => response.json())
         .then(data => {
-            if (data.cod === 200) {
-                getWeatherByCity(data.name);
-            } else {
-                console.error('Error with reverse geocoding:', data.message);
-                getWeatherByCity("Manila");
-            }
+            const city = getCityFromNominatim(data);
+            const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+            const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
+            fetchWeatherData(currentWeatherUrl, forecastUrl);
         })
         .catch(error => {
-            console.error('Error fetching city from coordinates:', error);
+            console.error('Error with Nominatim reverse geocoding:', error);
             getWeatherByCity("Manila");
         });
+}
+
+function getCityFromNominatim(data) {
+    if (data.address) {
+        if (data.address.city) return data.address.city;
+        if (data.address.town) return data.address.town;
+        if (data.address.village) return data.address.village;
+    }
+    return "Manila"; // Fallback
 }
 
 function getWeatherByCity(city) {
@@ -124,7 +133,7 @@ function displayWeather(data) {
             <div class="wind-arrow" style="transform: rotate(${deg}deg)">➤</div>
         </div>
     `;
-
+    
     updateTime(); // Update time immediately after displaying weather
 }
 
