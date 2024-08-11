@@ -47,14 +47,14 @@ function updateTime() {
 }
 
 function getWeatherByCoords(lat, lon) {
-    const nominatimUrl = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`;
+    const nominatimUrl = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1`;
     fetch(nominatimUrl, {
         headers: { 'User-Agent': 'WeatherApp/1.0 (your.email@example.com)' }
     })
         .then(response => response.json())
         .then(data => {
             console.log('Nominatim response:', data); // Debugging
-            const city = getCityFromNominatim(data);
+            const city = extractCityFromNominatim(data);
             if (city) {
                 const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
                 const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
@@ -70,11 +70,13 @@ function getWeatherByCoords(lat, lon) {
         });
 }
 
-function getCityFromNominatim(data) {
+function extractCityFromNominatim(data) {
     if (data && data.address) {
         console.log('Nominatim address details:', data.address); // Debugging
-        // Prioritize city, town, or other relevant fields
-        return data.address.city || data.address.town || data.address.village || data.address.locality || data.address.suburb || 'Unknown';
+        // Extract city from detailed address fields
+        return data.address.city || data.address.town || data.address.village || 
+               data.address.locality || data.address.suburb || data.address.neighborhood || 
+               data.address.hamlet || 'Unknown';
     }
     return 'Unknown';
 }
