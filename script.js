@@ -73,18 +73,20 @@ function getWeatherByCoords(lat, lon) {
 function extractCityFromNominatim(data) {
     if (data && data.address) {
         console.log('Nominatim address details:', data.address); // Debugging
-        // Extract city from detailed address fields, prioritizing city over other components
-        const city = data.address.city || data.address.town || data.address.village ||
-                     data.address.locality || data.address.suburb || data.address.neighborhood ||
-                     data.address.hamlet || 'Unknown';
+        // Refine city extraction with higher priority for precise city names
+        const address = data.address;
 
-        // If city is not found, attempt a fallback
-        if (city === 'Unknown') {
-            const addressParts = [data.address.state, data.address.country];
-            return addressParts.filter(part => part).join(', ') || 'Unknown';
+        // Prioritize city, town, and locality over other address components
+        let city = address.city || address.town || address.locality || address.village || address.hamlet;
+        
+        // In case city is not available, use a combination of available components
+        if (!city) {
+            const possibleCity = address.state || address.region || address.suburb || address.neighborhood;
+            city = possibleCity || address.country;
         }
 
-        return city;
+        // Return city if found, otherwise fallback to region and country
+        return city ? city : 'Unknown';
     }
     return 'Unknown';
 }
